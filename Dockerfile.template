@@ -11,8 +11,7 @@
 #     Create-Net / FBK - initial API and implementation
 #-------------------------------------------------------------------------------
 
-ARG BASEIMAGE_BUILD=agileiot/raspberry-pi3-zulujdk:8-jdk-maven
-ARG BASEIMAGE_DEPLOY=agileiot/raspberry-pi3-zulujdk:8-jre
+ARG BASEIMAGE_BUILD=resin/%%RESIN_MACHINE_NAME%%-debian
 FROM $BASEIMAGE_BUILD
 
 # Add packages
@@ -36,7 +35,18 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     gcc-4.9 \
     g++-4.9 \
     qdbus \
+    wget \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+    
+# Install Azul Java stuff
+RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9 && \
+    sudo apt-add-repository 'deb http://repos.azulsystems.com/debian stable main' && \
+    sudo apt-get update && \
+    sudo apt-get install zulu-8 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# TODO - set as appropriate via ARG
+ENV JAVA_HOME=/usr/lib/jvm/zulu-8-amd64
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
 WORKDIR /usr/src/app
@@ -58,17 +68,17 @@ COPY pom.xml pom.xml
 
 RUN mvn package
 
-FROM $BASEIMAGE_DEPLOY
+# FROM $BASEIMAGE_DEPLOY
 WORKDIR /usr/src/app
 ENV APATH /usr/src/app
 
-COPY --from=0 $APATH/scripts scripts
-COPY --from=0 $APATH/test test
-COPY --from=0 $APATH/deps deps
-COPY --from=0 $APATH/org.eclipse.agail.ProtocolManager/target/protocol-manager-1.0-jar-with-dependencies.jar org.eclipse.agail.ProtocolManager/target/protocol-manager-1.0-jar-with-dependencies.jar
-COPY --from=0 $APATH/org.eclipse.agail.DeviceManager/target/device-manager-1.0-jar-with-dependencies.jar org.eclipse.agail.DeviceManager/target/device-manager-1.0-jar-with-dependencies.jar
-COPY --from=0 $APATH/org.eclipse.agail.DeviceFactory/target/DeviceFactory-1.0-jar-with-dependencies.jar org.eclipse.agail.DeviceFactory/target/DeviceFactory-1.0-jar-with-dependencies.jar
-COPY --from=0 $APATH/org.eclipse.agail.DeviceFactory/target/classes/org/eclipse/agail/device/instance org.eclipse.agail.DeviceFactory/target/classes/org/eclipse/agail/device/instance
-COPY --from=0 $APATH/org.eclipse.agail.http/target/http-1.0-jar-with-dependencies.jar org.eclipse.agail.http/target/http-1.0-jar-with-dependencies.jar
+# COPY --from=0 $APATH/scripts scripts
+# COPY --from=0 $APATH/test test
+# COPY --from=0 $APATH/deps deps
+# COPY --from=0 $APATH/org.eclipse.agail.ProtocolManager/target/protocol-manager-1.0-jar-with-dependencies.jar org.eclipse.agail.ProtocolManager/target/protocol-manager-1.0-jar-with-dependencies.jar
+# COPY --from=0 $APATH/org.eclipse.agail.DeviceManager/target/device-manager-1.0-jar-with-dependencies.jar org.eclipse.agail.DeviceManager/target/device-manager-1.0-jar-with-dependencies.jar
+# COPY --from=0 $APATH/org.eclipse.agail.DeviceFactory/target/DeviceFactory-1.0-jar-with-dependencies.jar org.eclipse.agail.DeviceFactory/target/DeviceFactory-1.0-jar-with-dependencies.jar
+# COPY --from=0 $APATH/org.eclipse.agail.DeviceFactory/target/classes/org/eclipse/agail/device/instance org.eclipse.agail.DeviceFactory/target/classes/org/eclipse/agail/device/instance
+# COPY --from=0 $APATH/org.eclipse.agail.http/target/http-1.0-jar-with-dependencies.jar org.eclipse.agail.http/target/http-1.0-jar-with-dependencies.jar
 
 CMD [ "bash", "/usr/src/app/scripts/start.sh" ]
