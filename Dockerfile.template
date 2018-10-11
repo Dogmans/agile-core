@@ -45,8 +45,7 @@ RUN sudo apt-get update \
 
 # Set JAVA_HOME to whatever the install dir is
 RUN ln -s /usr/lib/jvm/`ls /usr/lib/jvm` /usr/lib/jvm/default-java
-#ENV JAVA_HOME /usr/lib/jvm/default-java
-ENV JAVA_HOME /usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt
+ENV JAVA_HOME /usr/lib/jvm/default-java
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
 WORKDIR /usr/src/app
@@ -55,6 +54,7 @@ ENV APATH /usr/src/app
 COPY scripts scripts
 COPY agile-dbus-java-interface agile-dbus-java-interface
 RUN CC=clang CXX=clang++ CMAKE_C_COMPILER=clang CMAKE_CXX_COMPILER=clang++ \
+JAVA_HOME=/usr/lib/jvm/`ls /usr/lib/jvm` \
 scripts/install-agile-interfaces.sh $APATH/deps
 
 # copy directories into WORKDIR
