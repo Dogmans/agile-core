@@ -72,6 +72,14 @@ FROM $BASEIMAGE_BUILD
 WORKDIR /usr/src/app
 ENV APATH /usr/src/app
 
+# Install Java stuff
+RUN sudo apt-get update \
+    && sudo apt-get install oracle-java8-jre \
+    && ln -s /usr/lib/jvm/`ls /usr/lib/jvm` /usr/lib/jvm/default-java \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME /usr/lib/jvm/jre-8-oracle-arm32-vfp-hflt
+
 COPY --from=0 $APATH/scripts scripts
 COPY --from=0 $APATH/test test
 COPY --from=0 $APATH/deps deps
