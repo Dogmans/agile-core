@@ -45,7 +45,7 @@ RUN sudo apt-get update \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set JAVA_HOME to whatever the install dir is
-ENV JAVA_HOME /usr/lib/jvm/default-java
+ENV JAVA_HOME /usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
 WORKDIR /usr/src/app
