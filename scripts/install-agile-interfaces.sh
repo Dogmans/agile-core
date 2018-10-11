@@ -13,7 +13,6 @@
 #-------------------------------------------------------------------------------
 
 set -e
-export JAVA_HOME="/usr/lib/jvm/`ls /usr/lib/jvm`"
 CURRDIR=`pwd`
 DEPS=${1:-$CURRDIR/deps}
 BUILD=$DEPS/build
