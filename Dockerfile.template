@@ -54,7 +54,6 @@ ENV APATH /usr/src/app
 COPY scripts scripts
 COPY agile-dbus-java-interface agile-dbus-java-interface
 RUN CC=clang CXX=clang++ CMAKE_C_COMPILER=clang CMAKE_CXX_COMPILER=clang++ \
-JAVA_HOME=/usr/lib/jvm/`ls /usr/lib/jvm` \
 scripts/install-agile-interfaces.sh $APATH/deps
 
 # copy directories into WORKDIR
