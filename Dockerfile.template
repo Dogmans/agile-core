@@ -41,10 +41,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 # Install Java stuff
 RUN sudo apt-get update \
     && sudo apt-get install oracle-java8-jdk \
+    && ln -s /usr/lib/jvm/`ls /usr/lib/jvm` /usr/lib/jvm/default-java \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set JAVA_HOME to whatever the install dir is
-RUN ln -s /usr/lib/jvm/`ls /usr/lib/jvm` /usr/lib/jvm/default-java
 ENV JAVA_HOME /usr/lib/jvm/default-java
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
