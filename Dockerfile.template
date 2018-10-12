@@ -38,13 +38,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     wget \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
     
-# Install Java stuff - installs OpenJDK8 on stretch
+# Install Java stuff - not default-jre as think headers might not be included
 RUN sudo apt-get update \
-    && sudo apt-get install default-jre \
+    && sudo apt-get install oracle-java8-jdk \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set JAVA_HOME to whatever the install dir is
-ENV JAVA_HOME /usr/lib/jvm/default-java
+ENV JAVA_HOME /usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
 WORKDIR /usr/src/app
